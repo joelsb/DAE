@@ -3,6 +3,7 @@ package pt.ipleiria.estg.dei.ei.dae.academics.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.List;
         )
 })
 @Entity
-public class Subject {
+public class Subject extends Versionable implements Serializable {
     @Id
     private long code;
     @NotNull

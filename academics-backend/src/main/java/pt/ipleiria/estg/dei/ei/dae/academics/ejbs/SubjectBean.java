@@ -2,6 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.academics.ejbs;
 
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Course;
@@ -34,13 +35,25 @@ public class SubjectBean {
     }
 
     public void update(long code, String name, long courseCode, int courseYear, int scholarYear) {
-        Course course = entityManager.find(Course.class, courseCode);
-        Subject existingSubject = entityManager.find(Subject.class, code);
-        existingSubject.setCode(code);
-        existingSubject.setName(name);
-        existingSubject.setCourse(course);
-        existingSubject.setCourseYear(courseYear);
-        existingSubject.setScholarYear(scholarYear);
-        entityManager.merge(existingSubject);
+        Subject subject = entityManager.find(Subject.class, code);
+        if (subject == null) {
+            System.err.println("ERROR_SUBJECT_NOT_FOUND: " + code);
+            return;
+        }
+        entityManager.lock(subject, LockModeType.OPTIMISTIC);
+        subject.setName(name);
+
+        if (subject.getCourse().getCode() != courseCode) {
+            Course course = entityManager.find(Course.class, courseCode);
+            if (course == null) {
+                System.err.println("ERROR_COURSE_NOT_FOUND: " + courseCode);
+                return;
+            }
+            subject.setCourse(course);
+        }
+
+        subject.setCourseYear(courseYear);
+        subject.setScholarYear(scholarYear);
     }
+
 }

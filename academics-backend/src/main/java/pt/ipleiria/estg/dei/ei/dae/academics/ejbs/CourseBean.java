@@ -3,6 +3,7 @@ package pt.ipleiria.estg.dei.ei.dae.academics.ejbs;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Course;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Student;
@@ -26,9 +27,14 @@ public class CourseBean {
     }
     public void update(long code, String name) {
         Course course = entityManager.find(Course.class, code);
+        if (course == null) {
+            System.err.println("ERROR_COURSE_NOT_FOUND: " + code);
+            return;
+        }
+        entityManager.lock(course, LockModeType.OPTIMISTIC);
         course.setName(name);
-        entityManager.merge(course);
     }
+
     public void remove(long code) {
         Course course = entityManager.find(Course.class, code);
         entityManager.remove(course);

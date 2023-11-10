@@ -19,7 +19,7 @@ import java.util.Objects;
                 query = "SELECT c FROM Course c ORDER BY c.name" // JPQL
         )
 })
-public class Course implements Serializable {
+public class Course extends Versionable implements Serializable {
     @Id
     private long code;
     @NotNull

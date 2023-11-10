@@ -8,6 +8,8 @@ import jakarta.ejb.EJB;
 import jakarta.ws.rs.core.MediaType;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Student;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Subject;
+import pt.ipleiria.estg.dei.ei.dae.academics.exceptions.MyEntityExistsException;
+import pt.ipleiria.estg.dei.ei.dae.academics.exceptions.MyEntityNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +70,7 @@ public class StudentService {
     }
     @POST
     @Path("/")
-    public Response createNewStudent (StudentDTO studentDTO){
+    public Response createNewStudent (StudentDTO studentDTO) throws MyEntityNotFoundException, MyEntityExistsException {
         studentBean.create(
                 studentDTO.getUsername(),
                 studentDTO.getPassword(),
@@ -159,4 +161,5 @@ public class StudentService {
             return Response.status(Response.Status.BAD_REQUEST).entity("Error unenrolling student: " + e.getMessage()).build();
         }
     }
+
 }

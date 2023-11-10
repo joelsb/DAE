@@ -2,11 +2,14 @@ package pt.ipleiria.estg.dei.ei.dae.academics.ejbs;
 
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 import org.hibernate.Hibernate;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Course;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Student;
 import pt.ipleiria.estg.dei.ei.dae.academics.entities.Subject;
+import pt.ipleiria.estg.dei.ei.dae.academics.exceptions.MyEntityExistsException;
+import pt.ipleiria.estg.dei.ei.dae.academics.exceptions.MyEntityNotFoundException;
 
 import java.util.List;
 
@@ -14,10 +17,17 @@ import java.util.List;
 public class StudentBean {
     @PersistenceContext
     private EntityManager entityManager;
-    public void create(String username, String password, String name, String email, long courseCode){
+    public void create(String username, String password, String name, String email, long courseCode) throws MyEntityExistsException, MyEntityNotFoundException {
+        var student = entityManager.find(Student.class, username);
+        if(student != null){
+            throw new MyEntityExistsException("Student with username: " + username + " already exists");
+        }
         Course course = entityManager.find(Course.class, courseCode);
-        var student = new Student(username, password, name, email, course);
-        entityManager.persist(student);
+        if (course == null) {
+            throw new MyEntityNotFoundException("Course with code: " + courseCode + " not found");
+        }
+        var newStudent = new Student(username, password, name, email, course);
+        entityManager.persist(newStudent);
     }
     public List<Student> getAll() {
         // remember, maps to: “SELECT s FROM Student s ORDER BY s.name”
@@ -32,13 +42,23 @@ public class StudentBean {
         return student;
     }
     public void update(String username, String password, String name, String email, long courseCode) {
-        Course course = entityManager.find(Course.class, courseCode);
         Student student = entityManager.find(Student.class, username);
+        if (student == null) {
+            System.err.println("ERROR_STUDENT_NOT_FOUND: " + username);
+            return;
+        }
+        entityManager.lock(student, LockModeType.OPTIMISTIC);
         student.setPassword(password);
         student.setName(name);
         student.setEmail(email);
-        student.setCourse(course);
-        entityManager.merge(student);
+        if (student.getCourse().getCode() != courseCode) {
+            Course course = entityManager.find(Course.class, courseCode);
+            if (course == null) {
+                System.err.println("ERROR_COURSE_NOT_FOUND: " + courseCode);
+                return;
+            }
+            student.setCourse(course);
+        }
     }
 
     public void enrollStudentInSubject(String username, long subjectCode) {

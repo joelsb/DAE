@@ -110,7 +110,7 @@ public class TeacherService {
         existingTeacher.setEmail(teacherDTO.getEmail());
         existingTeacher.setOffice(teacherDTO.getOffice());
         // Update other properties of the Teacher entity from teacherDTO if necessary
-        teacherBean.update(existingTeacher);
+        teacherBean.update(teacherDTO.getUsername(), teacherDTO.getPassword(), teacherDTO.getName(), teacherDTO.getEmail(), teacherDTO.getOffice());
         return Response.status(Response.Status.OK).entity(toDTO(existingTeacher)).build();
     }
 
@@ -122,7 +122,7 @@ public class TeacherService {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        teacherBean.delete(existingTeacher);
+        teacherBean.delete(existingTeacher.getUsername());
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 }

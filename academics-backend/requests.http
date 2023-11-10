@@ -1,8 +1,10 @@
 ##### Students
+
+# Get All Students
 GET http://localhost:8080/academics/api/students
 Accept: application/json
 
-###
+# Create New Student
 POST http://localhost:8080/academics/api/students
 Content-Type: application/json
 
@@ -14,11 +16,40 @@ Content-Type: application/json
   "courseCode": 1
 }
 
+# Update Student
+PUT http://localhost:8080/academics/api/students
+Content-Type: application/json
+
+{
+  "email": "johndoe_updated@mail.com",
+  "name": "John Doe Updated",
+  "username": "john",
+  "password": "jd_updated",
+  "courseCode": 2
+}
+
+# Delete Student
+DELETE http://localhost:8080/academics/api/students/john
+
+# Get Student Details
+GET http://localhost:8080/academics/api/students/john
+
+# Get Student Subjects
+GET http://localhost:8080/academics/api/students/john/subjects
+
+# Enroll Student in Subject
+PUT http://localhost:8080/academics/api/students/john/enroll/123
+
+# Unroll Student from Subject
+PUT http://localhost:8080/academics/api/students/john/unroll/123
+
 ##### Courses
+
+# Get All Courses
 GET http://localhost:8080/academics/api/courses
 Accept: application/json
 
-###
+# Create New Course
 POST http://localhost:8080/academics/api/courses
 Content-Type: application/json
 
@@ -27,13 +58,92 @@ Content-Type: application/json
   "name": "5555"
 }
 
-#### Subjects do Student
-GET http://localhost:8080/academics/api/students/joel
+# Update Course
+PUT http://localhost:8080/academics/api/courses
+Content-Type: application/json
 
-###
-GET http://localhost:8080/academics/api/students/joel/subjects
+{
+  "code": 5,
+  "name": "5555 Updated"
+}
 
+# Delete Course
+DELETE http://localhost:8080/academics/api/courses/5
 
-#### Subjects
+##### Subjects
+
+# Get All Subjects
 GET http://localhost:8080/academics/api/subjects
+Accept: application/json
 
+# Get Subject Teachers
+GET http://localhost:8080/academics/api/subjects/123/teachers
+
+# Get Subject Students
+GET http://localhost:8080/academics/api/subjects/123/students
+
+# Create New Subject
+POST http://localhost:8080/academics/api/subjects
+Content-Type: application/json
+
+{
+  "code": 123,
+  "name": "Math",
+  "courseCode": 1,
+  "courseYear": 3,
+  "scholarYear": 2023
+}
+
+# Update Subject
+PUT http://localhost:8080/academics/api/subjects
+Content-Type: application/json
+
+{
+  "code": 123,
+  "name": "Math Updated",
+  "courseCode": 2,
+  "courseYear": 4,
+  "scholarYear": 2024
+}
+
+# Delete Subject
+DELETE http://localhost:8080/academics/api/subjects/123
+
+##### Teachers
+
+# Get All Teachers
+GET http://localhost:8080/academics/api/teachers
+Accept: application/json
+
+# Get Teacher Subjects
+GET http://localhost:8080/academics/api/teachers/johnteacher/subjects
+
+# Create New Teacher
+POST http://localhost:8080/academics/api/teachers
+Content-Type: application/json
+
+{
+  "username": "johnteacher",
+  "password": "jt",
+  "name": "John Teacher",
+  "email": "johnteacher@mail.com",
+  "office": "A-101"
+}
+
+# Update Teacher
+PUT http://localhost:8080/academics/api/teachers
+Content-Type: application/json
+
+{
+  "username": "johnteacher",
+  "password": "jt_updated",
+  "name": "John Teacher Updated",
+  "email": "johnteacher_updated@mail.com",
+  "office": "B-202"
+}
+
+# Delete Teacher
+DELETE http://localhost:8080/academics/api/teachers/johnteacher
+
+# Get Teacher Details
+GET http://localhost:8080/academics/api/teachers/johnteacher
